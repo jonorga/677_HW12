@@ -9,11 +9,15 @@ import matplotlib.pyplot as plt
 df_cmg = pd.read_csv("cmg_weeks.csv")
 df_spy = pd.read_csv("spy_weeks.csv")
 
+# Question 1 ========================================================================================
 print("Question 1:")
+
+X = df_cmg[['Avg_Return', 'Volatility']][df_cmg['Week'] <= 50]
+Y = df_cmg[['Color']][df_cmg['Week'] <= 50]
 
 def Q1(df):
 	kmeans_clf = KMeans(n_clusters=3)
-	X = df[['Avg_Return', 'Volatility']][df['Week'] <= 50]
+	
 	y_means = kmeans_clf.fit_predict(X)
 	print("k = 3 k-means classifier implemented...")
 
@@ -37,3 +41,40 @@ def Q1(df):
 	print("Using the knee method, the point of diminishing returns seems to be around k = 6")
 
 Q1(df_cmg)
+
+
+print("\n")
+# Question 2 ========================================================================================
+print("Question 2:")
+kmeans_clf = KMeans(n_clusters=6)
+y_means = kmeans_clf.fit_predict(X)
+
+i = 0
+# cluster num, green count, red count
+cluster_analysis = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]
+while i < 50:
+	if Y['Color'].iloc[i] == "Green":
+		cluster_analysis[y_means[i]][0] += 1
+	else:
+		cluster_analysis[y_means[i]][1] += 1
+	i += 1
+
+print("{:<8} {:<8} {:<8}".format('Cluster', 'Green %', 'Red %'))
+
+count = 1
+for cluster in cluster_analysis:
+	total = cluster[0] + cluster[1]
+	green_perc = round((cluster[0] / total) * 100, 2)
+	red_perc = round((cluster[1] / total) * 100, 2)
+	print("{:<8} {:<8} {:<8}".format(str(count), str(green_perc) + "%", str(red_perc) + "%"))
+	count += 1
+
+
+print("\n")
+# Question 3 ========================================================================================
+print("Question 3:")
+
+
+
+
+
