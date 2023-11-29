@@ -94,6 +94,7 @@ print("Using the knee method, the point of diminishing returns seems to be aroun
 print("\n")
 # Question 3.2 ========================================================================================
 print("Question 3.2:")
+df = pd.read_excel("seeds_dataset.xlsx", header=None, names=['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'L'])
 kmeans_clf = KMeans(n_clusters=5)
 
 rand_feat_1 = random.randrange(7)
@@ -110,7 +111,7 @@ rand_feat_1 = "f" + str(rand_feat_1)
 rand_feat_2 = "f" + str(rand_feat_2)
 
 X32 = df[[rand_feat_1, rand_feat_2]]
-kmeans_clf.fit(X32)
+Y32 = kmeans_clf.fit_predict(X32)
 
 
 scatter_plot = plt.figure()
@@ -132,6 +133,35 @@ print("Looking at multiple iterations of the Q3.2 scatter plot it immediately ju
 	" most of the feature combbinations seem to have a pattern that could be predicted by linear"
 	" or logistic regression")
 
+print("\n")
+# Question 3.3 ========================================================================================
+print("Question 3.3:")
+
+
+cluster_analysis = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+
+i = 0
+while i < 210:
+	cluster_analysis[Y32[i]][df['L'].iloc[i] - 1] += 1
+	i += 1
+
+i = 0
+while i < 5:
+	if cluster_analysis[i][0] > cluster_analysis[i][1] and cluster_analysis[i][0] > cluster_analysis[i][2]:
+		cluster_label = "Kama"
+	elif cluster_analysis[i][1] > cluster_analysis[i][0] and cluster_analysis[i][1] > cluster_analysis[i][2]:
+		cluster_label = "Rosa"
+	elif cluster_analysis[i][2] > cluster_analysis[i][0] and cluster_analysis[i][2] > cluster_analysis[i][1]:
+		cluster_label = "Canadian"
+	print("Cluster " + str(i + 1))
+	print("Label: " + cluster_label)
+	print("Centroid: " + str(cluster_df.iloc[i].values) + "\n")
+	i += 1
+
+
+print("\n")
+# Question 3.4 ========================================================================================
+print("Question 3.4:")
 
 
 
