@@ -9,6 +9,8 @@ from sklearn import svm
 from sklearn.naive_bayes import GaussianNB
 import matplotlib.pyplot as plt
 import random
+import math
+pd.options.mode.chained_assignment = None  # default='warn'
 
 # Last digit of BUID: 6
 # R = 0, class L = 1 (negative) and L = 2 (positive)
@@ -145,6 +147,8 @@ while i < 210:
 	cluster_analysis[Y32[i]][df['L'].iloc[i] - 1] += 1
 	i += 1
 
+cluster_df['Label'] = ''
+cluster_df['Size'] = ''
 i = 0
 while i < 5:
 	if cluster_analysis[i][0] > cluster_analysis[i][1] and cluster_analysis[i][0] > cluster_analysis[i][2]:
@@ -155,7 +159,9 @@ while i < 5:
 		cluster_label = "Canadian"
 	print("Cluster " + str(i + 1))
 	print("Label: " + cluster_label)
-	print("Centroid: " + str(cluster_df.iloc[i].values) + "\n")
+	print("Centroid: " + str(cluster_df[[0, 1]].iloc[i].values) + "\n")
+	cluster_df['Label'].iloc[i] = cluster_label
+	cluster_df['Size'].iloc[i] = cluster_analysis[i][0] + cluster_analysis[i][1] + cluster_analysis[i][2] 
 	i += 1
 
 
@@ -163,6 +169,47 @@ print("\n")
 # Question 3.4 ========================================================================================
 print("Question 3.4:")
 
+cluster_df = cluster_df.sort_values('Size', ascending=False)
+
+def FindCluster(lab):
+	i = 0
+	while i < 5:
+		if cluster_df['Label'].iloc[i] == lab:
+			return [cluster_df['Label'].iloc[i], cluster_df[0].iloc[i], cluster_df[1].iloc[i]]
+		i += 1
+cluster_1 = FindCluster("Kama")
+cluster_2 = FindCluster("Rosa")
+cluster_3 = FindCluster("Canadian")
+
+df['Cluster_Label'] = ''
+i = 0
+correct = 0
+while i < 210:
+	x_val = df[rand_feat_1].iloc[i]
+	y_val = df[rand_feat_2].iloc[i]
+	dist_to_1 = math.sqrt( ( (x_val - cluster_1[1]) ** 2 )   +   ( (y_val - cluster_1[2]) ** 2 ) )
+	dist_to_2 = math.sqrt( ( (x_val - cluster_2[1]) ** 2 )   +   ( (y_val - cluster_2[2]) ** 2 ) )
+	dist_to_3 = math.sqrt( ( (x_val - cluster_3[1]) ** 2 )   +   ( (y_val - cluster_3[2]) ** 2 ) )
+
+	if dist_to_1 < dist_to_2 and dist_to_1 < dist_to_3:
+		df['Cluster_Label'].iloc[i] = 1
+	elif dist_to_2 < dist_to_1 and dist_to_2 < dist_to_3:
+		df['Cluster_Label'].iloc[i] = 2
+	elif dist_to_3 < dist_to_1 and dist_to_3 < dist_to_2:
+		df['Cluster_Label'].iloc[i] = 3
+
+	if df['Cluster_Label'].iloc[i] == df['L'].iloc[i]:
+		correct += 1
+
+	i += 1
+
+new_clf_acc = str(round((correct / 210) * 100, 2))
+print("The overall accuracy for the new classifier is " + new_clf_acc + "%")
+
+
+print("\n")
+# Question 3.5 ========================================================================================
+print("Question 3.5:")
 
 
 
