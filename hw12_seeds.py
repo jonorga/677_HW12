@@ -132,7 +132,7 @@ ax.set_ylabel(rand_feat_2)
 print("Saving Q3.2 scatter plot...")
 scatter_plot.savefig("Q3.2_scatterplot.png")
 print("Looking at multiple iterations of the Q3.2 scatter plot it immediately jumps out at me that"
-	" most of the feature combbinations seem to have a pattern that could be predicted by linear"
+	" most of the feature combinations seem to have a pattern that could be predicted by linear"
 	" or logistic regression")
 
 print("\n")
@@ -210,6 +210,22 @@ print("The overall accuracy for the new classifier is " + new_clf_acc + "%")
 print("\n")
 # Question 3.5 ========================================================================================
 print("Question 3.5:")
+# R = 0, class L = 1 (negative) and L = 2 (positive)
+
+
+y_actu = pd.Series(df['L'][df.index < 140], name="Actual")
+y_pred = pd.Series(df['Cluster_Label'][df.index < 140], name="Predicted")
+cm = pd.crosstab(y_actu, y_pred)
+accuracy = round(((cm[1].iloc[0] + cm[2].iloc[1]) / 140) * 100, 2)
+print("The accuracy of the new classifier for just the labels considered by SVM: " + str(accuracy) + "%")
+print("Confusion matrix:")
+print(cm)
+print("\nDespite fluctuations in accuracy as a result of random initialization for k-means and group "
+	"selection for the other classifiers, k-means is consistently worse than the other previous "
+	"classifiers.")
+
+
+
 
 
 
