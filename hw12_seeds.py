@@ -7,6 +7,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.cluster import KMeans
 from sklearn import svm
 from sklearn.naive_bayes import GaussianNB
+import matplotlib.pyplot as plt
+import random
 
 # Last digit of BUID: 6
 # R = 0, class L = 1 (negative) and L = 2 (positive)
@@ -68,7 +70,69 @@ PrintTableLine(cm_svmpoly[0], "SVM Polynomial", cm_svmpoly[1])
 PrintTableLine(cm_nb[0], "Naive Bayesian", cm_nb[1])
 
 print("\n")
-# Question 3 ========================================================================================
-print("Question 3:")
+# Question 3.1 ========================================================================================
+print("Question 3.1:")
+
+k = 1
+k_and_distortion = []
+while k <= 8:
+	kmeans_clf = KMeans(n_clusters=k)
+	kmeans_clf.fit(X)
+	k_and_distortion.append([k, kmeans_clf.inertia_])
+	k += 1
+
+fig, ax = plt.subplots()
+temp_df = pd.DataFrame(k_and_distortion, columns=['k', 'Distortion'])
+ax.plot(temp_df['k'], temp_df['Distortion'])
+ax.set(xlabel='k Value', ylabel='Distortion', title='k Distortion by Value')
+ax.grid()
+print("Saving Q3 graph...")
+fig.savefig("Q3_kDistortion_Graph.png")
+print("Using the knee method, the point of diminishing returns seems to be around k = 5")
+
+
+print("\n")
+# Question 3.2 ========================================================================================
+print("Question 3.2:")
+kmeans_clf = KMeans(n_clusters=5)
+
+rand_feat_1 = random.randrange(7)
+rand_feat_2 = random.randrange(7)
+if rand_feat_1 == rand_feat_2:
+	if rand_feat_2 == 6:
+		rand_feat_2 = 0
+	else:
+		rand_feat_2 += 1
+
+rand_feat_1 += 1
+rand_feat_2 += 1
+rand_feat_1 = "f" + str(rand_feat_1)
+rand_feat_2 = "f" + str(rand_feat_2)
+
+X32 = df[[rand_feat_1, rand_feat_2]]
+kmeans_clf.fit(X32)
+
+
+scatter_plot = plt.figure()
+ax = scatter_plot.add_subplot(1, 1, 1)
+ax.scatter(X32[rand_feat_1], X32[rand_feat_2], s=30, c=df['L'])
+
+cluster_df = pd.DataFrame(kmeans_clf.cluster_centers_)
+ax.scatter(cluster_df[0], cluster_df[1], s=820, alpha=0.5)
+for i in range(5):
+	mark = "$" + str(i + 1) + "$"
+	ax.scatter(cluster_df[0].iloc[i], cluster_df[1].iloc[i], s=220, marker=mark, color="Red")
+
+ax.set_title("Scatter plot for " + rand_feat_1 + " and " + rand_feat_2)
+ax.set_xlabel(rand_feat_1)
+ax.set_ylabel(rand_feat_2)
+print("Saving Q3.2 scatter plot...")
+scatter_plot.savefig("Q3.2_scatterplot.png")
+print("Looking at multiple iterations of the Q3.2 scatter plot it immediately jumps out at me that"
+	" most of the feature combbinations seem to have a pattern that could be predicted by linear"
+	" or logistic regression")
+
+
+
 
 
